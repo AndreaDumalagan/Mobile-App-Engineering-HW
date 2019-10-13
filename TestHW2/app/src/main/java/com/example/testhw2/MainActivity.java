@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -42,5 +43,22 @@ public class MainActivity extends AppCompatActivity {
 
         customAdapter = new CustomAdapter(this, contactList);
         lv.setAdapter(customAdapter);
+
+        btnDelete = (Button) findViewById(R.id.delete);
+        btnDelete.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                deleteContacts();
+            }
+        });
+    }
+
+    public void deleteContacts(){
+        for (int i = 0; i < contactList.size(); i++){
+            if(contactList.get(i).getSelected()){
+                contactList.remove(i);
+            }
+        }
+        customAdapter.notifyDataSetChanged();
     }
 }

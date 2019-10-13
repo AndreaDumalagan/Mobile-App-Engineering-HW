@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CustomAdapter extends BaseAdapter {
