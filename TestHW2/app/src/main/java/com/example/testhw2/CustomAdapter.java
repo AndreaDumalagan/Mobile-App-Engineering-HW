@@ -10,11 +10,20 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.w3c.dom.Text;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+
+/*
+* CUSTOM ADAPTER:
+*
+* Allows CheckBox and TextView to exist next to each other and in same position in ListView
+*
+* Allows CheckBox and TextView to have their own functions
+*
+* */
+
 
 public class CustomAdapter extends BaseAdapter {
 
@@ -30,6 +39,12 @@ public class CustomAdapter extends BaseAdapter {
         protected CheckBox checkBox;
         private TextView contactName;
     }
+
+
+    /*
+    * BASIC ADAPTER FUNCTIONS
+    * */
+
 
     @Override
     public int getCount(){return contactList.size();}
@@ -63,7 +78,6 @@ public class CustomAdapter extends BaseAdapter {
 
         holder.contactName.setText(contactList.get(position).getName());
         holder.checkBox.setChecked(contactList.get(position).getSelected());
-
         holder.checkBox.setTag(R.integer.btnplusview, convertView);
         holder.checkBox.setTag(position);
         holder.checkBox.setOnClickListener(new View.OnClickListener(){
@@ -82,7 +96,6 @@ public class CustomAdapter extends BaseAdapter {
 
             }
         });
-
         holder.contactName.setOnClickListener(new View.OnClickListener(){
             MainActivity test = new MainActivity();
             @Override
@@ -95,5 +108,6 @@ public class CustomAdapter extends BaseAdapter {
         });
 
         return convertView;
+
     }
 }

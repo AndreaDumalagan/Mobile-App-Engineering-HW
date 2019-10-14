@@ -66,6 +66,12 @@ public class MainActivity extends AppCompatActivity {
         customAdapter = new CustomAdapter(this, contactList);
         lv.setAdapter(customAdapter);
 
+
+
+        /*
+        * onClick IMPLEMENTATION
+        * */
+        //Delete Button (onClick)
         btnDelete = (Button) findViewById(R.id.delete);
         btnDelete.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -73,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 deleteContacts();
             }
         });
-
+        //Add Button (onClick)
         btnAdd = findViewById(R.id.add);
         btnAdd.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -83,6 +89,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+    /*
+    * BUTTON FUNCTIONS
+    * */
+
+    //Delete Button (function): Deletes all contact names whose checkbox boolean = true
     public void deleteContacts(){
         for (int i = 0; i < contactList.size(); i++){
             if(contactList.get(i).getSelected()){
@@ -92,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         customAdapter.notifyDataSetChanged();
     }
 
+    //Add Button (function): Opens addContact activity
     public void openAddContact(){
         Intent intent = new Intent(this, AddContact.class);
         startActivity(intent);
