@@ -17,6 +17,8 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,8 +40,28 @@ public class MainActivity extends AppCompatActivity {
 
         Contact first = new Contact("John Doe", "1234567890", false);
         Contact second = new Contact("Jane Doe", "9876543210", false);
+        Contact third  = new Contact("Andrea Dumalagan", "2243996303", false);
+        Contact fourth = new Contact("Kathleen Sanders", "7711219998", false);
+        Contact fifth = new Contact("Gerald Miller", "6354748832", false);
+        Contact sixth = new Contact("Russell Reber", "6581836745", false);
+
         contactList.add(first);
         contactList.add(second);
+        contactList.add(third);
+        contactList.add(fourth);
+        contactList.add(fifth);
+        contactList.add(sixth);
+
+        //SORT contactList ALPHABETICALLY
+        Collections.sort(contactList, new Comparator<Contact>() {
+            @Override
+
+
+
+            public int compare(Contact o1, Contact o2) {
+                return o1.getName().compareToIgnoreCase(o2.getName());
+            }
+        });
 
         customAdapter = new CustomAdapter(this, contactList);
         lv.setAdapter(customAdapter);
@@ -51,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
                 deleteContacts();
             }
         });
+
+        btnAdd = findViewById(R.id.add);
+        btnAdd.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                openAddContact();
+            }
+        });
     }
 
     public void deleteContacts(){
@@ -60,5 +90,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         customAdapter.notifyDataSetChanged();
+    }
+
+    public void openAddContact(){
+        Intent intent = new Intent(this, AddContact.class);
+        startActivity(intent);
     }
 }
