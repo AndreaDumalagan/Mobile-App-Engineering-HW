@@ -22,6 +22,7 @@ import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
     private ListView lv;
     private TextView tv;
     private ArrayList<Contact> contactList = new ArrayList<Contact>();
@@ -38,26 +39,17 @@ public class MainActivity extends AppCompatActivity {
         btnAdd = findViewById(R.id.add);
         btnDelete = findViewById(R.id.delete);
 
-        Contact first = new Contact("John Doe", "1234567890", false);
-        Contact second = new Contact("Jane Doe", "9876543210", false);
-        Contact third  = new Contact("Andrea Dumalagan", "2243996303", false);
-        Contact fourth = new Contact("Kathleen Sanders", "7711219998", false);
-        Contact fifth = new Contact("Gerald Miller", "6354748832", false);
-        Contact sixth = new Contact("Russell Reber", "6581836745", false);
+        Contact first = new Contact("Andrea Dumalagan", "2243996303", false);
+        Contact second = new Contact("Christian Remolado", "7326475642", false);
+        Contact third = new Contact("Andy Wang","3479514558", false);
 
         contactList.add(first);
         contactList.add(second);
         contactList.add(third);
-        contactList.add(fourth);
-        contactList.add(fifth);
-        contactList.add(sixth);
 
         //SORT contactList ALPHABETICALLY
         Collections.sort(contactList, new Comparator<Contact>() {
             @Override
-
-
-
             public int compare(Contact o1, Contact o2) {
                 return o1.getName().compareToIgnoreCase(o2.getName());
             }
@@ -90,6 +82,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Check that it is the SecondActivity with an OK result
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
+                // Get String data from Intent
+                String returnString = data.getStringExtra("keyName");
+
+                // Set text view with string
+                Toast.makeText(getBaseContext(), returnString, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
 
     /*
     * BUTTON FUNCTIONS
@@ -107,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Add Button (function): Opens addContact activity
     public void openAddContact(){
-        Intent intent = new Intent(this, AddContact.class);
+        Intent intent = new Intent(MainActivity.this, AddContact.class);
         startActivity(intent);
     }
 }

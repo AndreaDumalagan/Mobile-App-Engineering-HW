@@ -4,9 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class ContactDetails extends AppCompatActivity {
+
+    ListView listView;
+    ArrayAdapter arrayAdapter;
+    ArrayList<String> relationships;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +27,7 @@ public class ContactDetails extends AppCompatActivity {
 
         String currName = intent.getExtras().getString("contactName");
         String currPhone = intent.getExtras().getString("contactPhone");
+        relationships = intent.getStringArrayListExtra("contactRelationships");
 
         textName.setText(currName);
         textPhone.setText(currPhone);
