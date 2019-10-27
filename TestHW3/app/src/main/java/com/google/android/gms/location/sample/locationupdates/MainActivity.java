@@ -21,6 +21,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,8 +55,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -73,6 +77,12 @@ import java.util.Locale;
  * (as specified in AndroidManifest.xml).
  */
 public class MainActivity extends AppCompatActivity {
+
+    /**
+     * Database-related variables
+     * */
+    DatabaseHelper myDb ;
+    Button btnAddData;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -163,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //DatabaseHelper instance
+        myDb = new DatabaseHelper(this);
+        btnAddData = findViewById(R.id.checkin_db);
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
@@ -280,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             // Check for the integer request code originally supplied to startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
@@ -404,8 +419,38 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentLocation.getLongitude()));
             mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s",
                     mLastUpdateTimeLabel, mLastUpdateTime));
+
+            Toast.makeText(this, getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) ,
+                    Toast.LENGTH_LONG).show();
         }
     }
+
+
+    /**
+     * Returns address given latitude and longitude coordinates
+     * */
+    private String getCompleteAddressString(double latitude, double longitude){
+        StringBuilder result = new StringBuilder();
+        try {
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            while(addresses.size() == 0){
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            }
+            if (addresses.size() > 0) {
+                Address address = addresses.get(0);
+                result.append(address.getAddressLine(0)).append("\n");
+                //result.append(address.getLocality()).append("\n");
+                //result.append(address.getCountryName());
+            }
+        } catch (IOException e) {
+            Log.e("tag", e.getMessage());
+        }
+        return result.toString();
+    }
+
+
+
 
     /**
      * Removes location updates from the FusedLocationApi.
@@ -560,6 +605,20 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                             }
                         });
+            }
+        }
+    }
+    /**
+     * Function to push latitude, longitude coordinates to database
+     */
+    public void addData(View view){
+        if(mCurrentLocation != null) {
+            boolean isInserted = myDb.insertData(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+            if (isInserted) {
+                Toast.makeText(this, "YES", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "NO >:(", Toast.LENGTH_SHORT).show();
             }
         }
     }
