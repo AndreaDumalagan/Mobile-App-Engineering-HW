@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     // UI Widgets.
     private Button mStartUpdatesButton;
     private Button mStopUpdatesButton;
-    private TextView mLastUpdateTimeTextView;
+    private TextView mLastUpdateAddressView;
     private TextView mLatitudeTextView;
     private TextView mLongitudeTextView;
 
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
         mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
         mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
-        mLastUpdateTimeTextView = (TextView) findViewById(R.id.last_update_time_text);
+        mLastUpdateAddressView = (TextView) findViewById(R.id.last_update_time_text);
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -198,6 +198,16 @@ public class MainActivity extends AppCompatActivity {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mSettingsClient = LocationServices.getSettingsClient(this);
+
+        /**
+         * New Activity: Check-in Location
+         * */
+        btnAddData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, CheckInLocation.class));
+            }
+        });
 
         // Kick off the process of building the LocationCallback, LocationRequest, and
         // LocationSettingsRequest objects.
@@ -417,11 +427,11 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentLocation.getLatitude()));
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
                     mCurrentLocation.getLongitude()));
-            mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s",
-                    mLastUpdateTimeLabel, mLastUpdateTime));
+            mLastUpdateAddressView.setText(String.format(Locale.ENGLISH, "%s: %s",
+                    "Address", getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude())));
 
-            Toast.makeText(this, getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) ,
-                    Toast.LENGTH_LONG).show();
+            /*Toast.makeText(this, getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) ,
+                    Toast.LENGTH_LONG).show();*/
         }
     }
 
@@ -610,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
     }
     /**
      * Function to push latitude, longitude coordinates to database
-     */
+
     public void addData(View view){
         if(mCurrentLocation != null) {
             boolean isInserted = myDb.insertData(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
@@ -621,5 +631,5 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "NO >:(", Toast.LENGTH_SHORT).show();
             }
         }
-    }
+    }*/
 }
