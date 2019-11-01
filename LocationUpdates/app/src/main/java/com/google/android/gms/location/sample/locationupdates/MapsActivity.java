@@ -50,11 +50,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        /*LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-
         //Get user device location and see it on Google Maps
         getDeviceLocation();
         //Provides simple way to display a device's location on the map--does not provide data
@@ -63,18 +58,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         /**
-         * On long press in Google Maps, add a marker
-         * On long press on existing marker, allows user to drag marker
+         * On short click in Google Maps, add a marker
+         * On long click on existing marker, allows user to drag marker
          * TODO: Pass latitude, longitude coordinates to Locations.db -> maps_locations
          * */
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener(){
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
             @Override
-            public void onMapLongClick(LatLng latLng){
+            public void onMapClick(LatLng latLng) {
                 googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                                    .position(latLng)
-                                    .title(latLng.latitude + " " + latLng.longitude)
-                                    .snippet("Your marker snippet"))
-                                    .setDraggable(true);
+                        .position(latLng)
+                        .title(latLng.latitude + " " + latLng.longitude)
+                        .snippet("Your marker snippet"))
+                        .setDraggable(true);
             }
         });
 
@@ -93,8 +88,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMarkerDragEnd(Marker marker) {
                 LatLng newTitle = marker.getPosition();
                 marker.setTitle(newTitle.latitude + " " + newTitle.longitude);
-                Toast.makeText(MapsActivity.this, "Hello from " + newTitle.latitude + ", " + newTitle.longitude, Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MapsActivity.this, AddMapLocation.class));
+                marker.setDraggable(false);
+                Intent intent = new Intent(getBaseContext(), AddMapLocation.class);
+                intent.putExtra("ADD_LOCATION_LAT", Double.toString(newTitle.latitude));
+                intent.putExtra("ADD_LOCATION_LONG", Double.toString(newTitle.longitude));
+                startActivity(intent);
+
+                //startActivity(new Intent(MapsActivity.this, AddMapLocation.class));
             }
         });
     }
