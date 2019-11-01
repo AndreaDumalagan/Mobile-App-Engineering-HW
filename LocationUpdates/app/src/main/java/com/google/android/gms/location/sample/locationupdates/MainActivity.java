@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Database-related variables
      * */
-    DatabaseHelper myDb ;
+    DatabaseHelper myDb;
     Button btnAddData;
     Button btnMapView;
 
@@ -637,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
     public void addData(View view){
         if(mCurrentLocation != null) {
             boolean isInserted = myDb.insertData(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-            //hehe
+
             if (isInserted) {
                 Toast.makeText(this, "YES", Toast.LENGTH_SHORT).show();
             } else {

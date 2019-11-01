@@ -1,5 +1,6 @@
 package com.google.android.gms.location.sample.locationupdates;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -13,7 +14,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -44,7 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -59,6 +62,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Zoom in on user device location
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
+        /**
+         * On long press in Google Maps, add a marker
+         * On long press on existing marker, allows user to drag marker
+         * TODO: Pass latitude, longitude coordinates to Locations.db -> maps_locations
+         * */
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener(){
+            @Override
+            public void onMapLongClick(LatLng latLng){
+                googleMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                    .position(latLng)
+                                    .title(latLng.latitude + " " + latLng.longitude)
+                                    .snippet("Your marker snippet"))
+                                    .setDraggable(true);
+            }
+        });
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                LatLng newTitle = marker.getPosition();
+                marker.setTitle(newTitle.latitude + " " + newTitle.longitude);
+                Toast.makeText(MapsActivity.this, "Hello from " + newTitle.latitude + ", " + newTitle.longitude, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MapsActivity.this, AddMapLocation.class));
+            }
+        });
     }
 
     /**
