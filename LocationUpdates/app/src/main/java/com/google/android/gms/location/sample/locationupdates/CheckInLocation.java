@@ -71,6 +71,11 @@ public class CheckInLocation extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method that checks current latitude, longitude coordinates against entries in Locations.db
+     *  - Sets EditText to closest check-in
+     *  - If a check-in does not exists within 30m, EditText remains the same
+     * */
     class Load extends AsyncTask<String, String, String>{
         ProgressDialog progressDialog = new ProgressDialog(getBaseContext());
         @Override

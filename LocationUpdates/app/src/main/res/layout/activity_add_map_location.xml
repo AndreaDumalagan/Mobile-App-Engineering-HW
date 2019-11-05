@@ -27,15 +27,15 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Name of Location"
         android:layout_gravity="center"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:hint="Name of Location" />
 
     <TextView
         android:id="@+id/mapLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="125dp"
+        android:layout_marginTop="75dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:text="Latitude, Longitude Coordinates"
@@ -45,7 +45,7 @@
         android:id="@+id/button5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="175dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:text="Add to Database" />

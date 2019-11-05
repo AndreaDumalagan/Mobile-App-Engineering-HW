@@ -173,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
         myDb.insertData("DSV Lab", 40.5217127, -74.4606974, "94 Brett Rd, Piscataway, NJ 08854, USA");
         myDb.insertData("Mobile App Classroom", 40.5223, -74.461, "560 Metlars Ln, Piscataway, NJ 08854, USA");
         myDb.insertData("CoRE Building", 40.52129, -74.46109, "96 Frelinghuysen Rd, Piscataway, NJ 08854, USA");
-        myDb.insertData("GTL", 40.51967, -74.46103, "656 Bartholomew Rd, Piscataway, NJ 08854");*/
+        myDb.insertData("GTL", 40.51967, -74.46103, "656 Bartholomew Rd, Piscataway, NJ 08854");
+        myDb.insertData("Free Burritos", 40.52302158776, -74.458502792, "656 Bartholomew Rd, Piscataway, NJ 08854");*/
 
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);

@@ -1,9 +1,11 @@
 package com.google.android.gms.location.sample.locationupdates;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -28,6 +30,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private DatabaseHelper db;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    //TEST:
+    Location deviceLocation = new Location("");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,10 +125,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Location currentLocation = (Location) task.getResult();
 
                     LatLng userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
 
-                    Toast.makeText(MapsActivity.this, currentLocation.getLatitude() + ", " + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                    /*TEST:*/
+                    deviceLocation.setLatitude(userLocation.latitude);
+                    deviceLocation.setLongitude(userLocation.longitude);
+                    new Load().execute("help");
+
+
+
+                    //Toast.makeText(MapsActivity.this, deviceLocation.getLatitude() + ", " + deviceLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(MapsActivity.this, "Unable to get location", Toast.LENGTH_SHORT).show();
                 }
@@ -156,5 +166,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.setTitle(title);
         builder.setMessage(Message);
         builder.show();
+    }
+
+    //HARD TEST:
+    class Load extends AsyncTask<String, String, String> {
+        ProgressDialog progressDialog = new ProgressDialog(getBaseContext());
+        @Override
+        protected void onPreExecute(){
+            super.onPreExecute();
+
+        }
+        @Override
+        protected String doInBackground(String... strings) {
+            /*String myString = strings[0];
+
+            for(int i = 0; i <= 100; i++){
+                publishProgress("where we at boys: " + i);
+            }
+            return "This string is passed to onPostExecute";*/
+
+            db = new DatabaseHelper(getBaseContext());
+            Cursor res = db.getAllData();
+            float thirtyMeters = (float) 30;
+            float temp = thirtyMeters;
+
+            String passOnPostExec = null;
+
+            if(res.getCount() == 0){
+                return "Nothing in the database";
+            }
+
+            StringBuffer buffer = new StringBuffer();
+            while(res.moveToNext()){
+                Location checkInLocation = new Location("");
+                checkInLocation.setLatitude(Double.valueOf(res.getString(2)));
+                checkInLocation.setLongitude(Double.valueOf(res.getString(3)));
+
+                Location currLocation = new Location("");
+                currLocation.setLatitude(deviceLocation.getLatitude());
+                currLocation.setLongitude(deviceLocation.getLongitude());
+
+                float distanceInMeters = currLocation.distanceTo(checkInLocation);
+
+                if(distanceInMeters < thirtyMeters){
+
+                    if(temp != Math.min(temp, distanceInMeters)){
+                        temp = Math.min(temp, distanceInMeters);
+                        passOnPostExec = res.getString(1);
+                    }
+                    else{
+                        temp = Math.min(temp, distanceInMeters);
+                        passOnPostExec = res.getString(1);
+                    }
+
+                }
+            }
+            return passOnPostExec;
+        }
+
+        @Override
+        protected void onPostExecute(String unused){
+            super.onPostExecute(unused);
+            if(unused != null) {
+                showMessage("Closest To", unused);
+            }
+        }
     }
 }
