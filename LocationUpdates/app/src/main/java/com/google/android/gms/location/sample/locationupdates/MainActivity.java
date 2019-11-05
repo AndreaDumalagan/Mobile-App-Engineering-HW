@@ -1,19 +1,3 @@
-/*
-  Copyright 2017 Google Inc. All Rights Reserved.
-  <p>
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-  <p>
-  http://www.apache.org/licenses/LICENSE-2.0
-  <p>
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
- */
-
 package com.google.android.gms.location.sample.locationupdates;
 
 import android.Manifest;
@@ -144,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
      * Represents a geographical location.
      */
     private Location mCurrentLocation;
+    private String mCurrentAddress;
 
     // UI Widgets.
     private Button mStartUpdatesButton;
@@ -207,7 +192,12 @@ public class MainActivity extends AppCompatActivity {
         btnAddData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, CheckInLocation.class));
+                //startActivity(new Intent(MainActivity.this, CheckInLocation.class));
+                Intent intent = new Intent(getBaseContext(), CheckInLocation.class);
+                intent.putExtra("CHECK_IN_LAT", Double.toString(mCurrentLocation.getLatitude()));
+                intent.putExtra("CHECK_IN_LONG", Double.toString(mCurrentLocation.getLongitude()));
+                intent.putExtra("CHECK_IN_ADDRESS", mCurrentAddress);
+                startActivity(intent);
             }
         });
 
@@ -299,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mCurrentLocation = locationResult.getLastLocation();
                 mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+                mCurrentAddress = getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
                 updateLocationUI();
             }
         };
@@ -441,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
                     mCurrentLocation.getLongitude()));
             mLastUpdateAddressView.setText(String.format(Locale.ENGLISH, "%s: %s",
-                    "Address", getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude())));
+                    "Address", mCurrentAddress));
 
             /*Toast.makeText(this, getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) ,
                     Toast.LENGTH_LONG).show();*/

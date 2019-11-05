@@ -5,16 +5,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context=".CheckInLocation">
+    tools:context=".CheckInLocation"
+    android:orientation="vertical">
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:id= "@+id/checkin_location"
+        android:layout_gravity="center"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="25dp"
+        android:gravity="center"
+        android:hint="Name Location"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textColorLink="@color/colorAccent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/coordinates"
         android:layout_width="wrap_content"
-        android:layout_height="117dp"
+        android:layout_height="73dp"
         android:layout_gravity="center"
-        android:layout_weight="1"
         android:gravity="center"
-        android:text="HELLO FROM CHECK-IN WINDOW"
+        android:text="Latitude, Longitude"
         android:textColor="@color/common_google_signin_btn_text_dark_default" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="53dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Address"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
+
+    <Button
+        android:id="@+id/checkin_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Check-in to Location"
+        android:onClick="addData"/>
+
 
 </LinearLayout>

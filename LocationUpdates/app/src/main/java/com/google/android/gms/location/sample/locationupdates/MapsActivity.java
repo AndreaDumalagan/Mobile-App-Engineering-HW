@@ -1,6 +1,8 @@
 package com.google.android.gms.location.sample.locationupdates;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -21,9 +23,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
+    private DatabaseHelper db;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
@@ -34,6 +37,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        db = new DatabaseHelper(this);
     }
 
 
@@ -50,6 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
 
+        //Add markers from check-in table
+        checkInMarkers();
         //Get user device location and see it on Google Maps
         getDeviceLocation();
         //Provides simple way to display a device's location on the map--does not provide data
@@ -121,5 +128,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+    }
+
+    private void checkInMarkers(){
+        Cursor res = db.getAllData();
+
+        if(res.getCount() == 0){
+            //Show message
+            showMessage("Error", "No Check-in Locations Found.");
+            return;
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        while (res.moveToNext()){
+            LatLng latLng = new LatLng(Double.valueOf(res.getString(1)), Double.valueOf(res.getString(2)));
+            mMap.addMarker(new MarkerOptions().position(latLng).title("Check-in Location: " + res.getString(0)).snippet(latLng.latitude + ", " + latLng.longitude));
+            //buffer.append("Latitude: " + res.getString(1) +"\n");
+            //buffer.append("Longitude: " + res.getString(2) + "\n");
+        }
+    }
+
+    private void showMessage(String title, String Message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(Message);
+        builder.show();
     }
 }
