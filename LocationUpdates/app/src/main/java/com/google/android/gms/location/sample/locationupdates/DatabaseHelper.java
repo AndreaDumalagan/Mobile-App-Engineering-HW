@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
+        db.execSQL("create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME LONGTEXT,LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
         db.execSQL("create table " + TABLE_NAME_2 + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
         db.execSQL("create table " + CHECKIN_LOCATIONS + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME LONGTEXT,LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
         db.execSQL("create table " + MAP_LOCATIONS + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, LATITUDE DOUBLE, LONGITUDE DOUBLE, DATE TEXT, TIME TEXT)");
@@ -45,11 +45,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(double latitude, double longitude, String address){
+    public boolean insertData(String checkinLocation, double latitude, double longitude, String address){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
         //put data into columns, takes 2 arguments: column name and value
+        contentValues.put(checkinName, checkinLocation);
         contentValues.put(COL_2, latitude);
         contentValues.put(COL_3, longitude);
         contentValues.put(COL_4, address);

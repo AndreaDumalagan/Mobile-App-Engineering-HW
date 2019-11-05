@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class CheckInLocation extends AppCompatActivity {
 
     DatabaseHelper check_inLocation;
@@ -50,7 +52,7 @@ public class CheckInLocation extends AppCompatActivity {
 
         checkInName = findViewById(R.id.checkin_location);
 
-        check_inLocation = new DatabaseHelper(this);
+        //check_inLocation = new DatabaseHelper(this);
         btnCheckIn = findViewById(R.id.checkin_db);
     }
 
@@ -60,7 +62,7 @@ public class CheckInLocation extends AppCompatActivity {
     public void addData(View view){
 
         if(checkInName.getText().toString().length() != 0) {
-            check_inLocation.insertData(Double.valueOf(checkInLatitude), Double.valueOf(checkInLongitude), checkInAddress);
+            check_inLocation.insertData(checkInName.getText().toString(),Double.valueOf(checkInLatitude), Double.valueOf(checkInLongitude), checkInAddress);
             Toast.makeText(this, checkInName.getText().toString() + ": checked into database!", Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -76,17 +78,6 @@ public class CheckInLocation extends AppCompatActivity {
             super.onPreExecute();
 
         }
-
-        /**
-         * TODO: Make a function that will parse through entries
-         *
-         * TODO: (a) Compare latitude, longitude coordinates
-         *
-         * TODO: (b) Return minimum difference between current location and lat, long
-         *
-         * TODO: (c) IF within 30m, set and lock EditText to existing Check-in Location name,
-         *           ELSE set EditText edit property
-         * */
         @Override
         protected String doInBackground(String... strings) {
             /*String myString = strings[0];
@@ -96,17 +87,51 @@ public class CheckInLocation extends AppCompatActivity {
             }
             return "This string is passed to onPostExecute";*/
 
-
+            check_inLocation = new DatabaseHelper(getBaseContext());
             Cursor res = check_inLocation.getAllData();
+            float thirtyMeters = (float) 30;
+            float temp = thirtyMeters;
 
-            return "This string is passed to onPostExecute";
+            String passOnPostExec = null;
 
+            if(res.getCount() == 0){
+                return "Nothing in the database";
+            }
+
+            StringBuffer buffer = new StringBuffer();
+            while(res.moveToNext()){
+                Location checkInLocation = new Location("");
+                checkInLocation.setLatitude(Double.valueOf(res.getString(2)));
+                checkInLocation.setLongitude(Double.valueOf(res.getString(3)));
+
+                Location currLocation = new Location("");
+                currLocation.setLatitude(Double.valueOf(checkInLatitude));
+                currLocation.setLongitude(Double.valueOf(checkInLongitude));
+
+                float distanceInMeters = currLocation.distanceTo(checkInLocation);
+
+                if(distanceInMeters < thirtyMeters){
+
+                    if(temp != Math.min(temp, distanceInMeters)){
+                        temp = Math.min(temp, distanceInMeters);
+                        passOnPostExec = res.getString(1);
+                    }
+                    else{
+                        temp = Math.min(temp, distanceInMeters);
+                        passOnPostExec = res.getString(1);
+                    }
+
+                }
+            }
+            return passOnPostExec;
         }
 
         @Override
         protected void onPostExecute(String unused){
             super.onPostExecute(unused);
-            //checkInName.setText(unused);
+            if(unused != null) {
+                checkInName.setText(unused);
+            }
         }
     }
 }

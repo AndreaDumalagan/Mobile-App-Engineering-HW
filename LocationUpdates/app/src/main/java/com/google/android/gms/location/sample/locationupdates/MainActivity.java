@@ -165,6 +165,16 @@ public class MainActivity extends AppCompatActivity {
         btnAddData = findViewById(R.id.checkin_db);
         btnMapView = findViewById(R.id.map_view);
 
+
+        /**
+         * Test locations
+         *
+        myDb.insertData("55 Hunt", 40.5039456, -74.4562403, "55 Huntington St, New Brunswick, NJ 08901, USA");
+        myDb.insertData("DSV Lab", 40.5217127, -74.4606974, "94 Brett Rd, Piscataway, NJ 08854, USA");
+        myDb.insertData("Mobile App Classroom", 40.5223, -74.461, "560 Metlars Ln, Piscataway, NJ 08854, USA");
+        myDb.insertData("CoRE Building", 40.52129, -74.46109, "96 Frelinghuysen Rd, Piscataway, NJ 08854, USA");
+        myDb.insertData("GTL", 40.51967, -74.46103, "656 Bartholomew Rd, Piscataway, NJ 08854");*/
+
         // Locate the UI widgets.
         mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
         mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);

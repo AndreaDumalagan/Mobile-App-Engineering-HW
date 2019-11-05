@@ -123,6 +123,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng userLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+
+                    Toast.makeText(MapsActivity.this, currentLocation.getLatitude() + ", " + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(MapsActivity.this, "Unable to get location", Toast.LENGTH_SHORT).show();
                 }
@@ -141,8 +143,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         StringBuffer buffer = new StringBuffer();
         while (res.moveToNext()){
-            LatLng latLng = new LatLng(Double.valueOf(res.getString(1)), Double.valueOf(res.getString(2)));
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Check-in Location: " + res.getString(0)).snippet(latLng.latitude + ", " + latLng.longitude));
+            LatLng latLng = new LatLng(Double.valueOf(res.getString(2)), Double.valueOf(res.getString(3)));
+            mMap.addMarker(new MarkerOptions().position(latLng).title("Check-in Location: " + res.getString(1)).snippet(latLng.latitude + ", " + latLng.longitude));
             //buffer.append("Latitude: " + res.getString(1) +"\n");
             //buffer.append("Longitude: " + res.getString(2) + "\n");
         }
