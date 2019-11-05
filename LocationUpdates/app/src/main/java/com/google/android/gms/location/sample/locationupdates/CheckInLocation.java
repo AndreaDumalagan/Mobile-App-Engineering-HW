@@ -17,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class CheckInLocation extends AppCompatActivity {
 
     DatabaseHelper check_inLocation;
@@ -28,6 +31,13 @@ public class CheckInLocation extends AppCompatActivity {
     TextView coordinates;
     TextView address;
     Button btnCheckIn;
+
+
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+    SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+    String date = dateFormat.format(calendar.getTime());
+    String time = timeFormat.format(calendar.getTime());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +72,7 @@ public class CheckInLocation extends AppCompatActivity {
     public void addData(View view){
 
         if(checkInName.getText().toString().length() != 0) {
-            check_inLocation.insertData(checkInName.getText().toString(),Double.valueOf(checkInLatitude), Double.valueOf(checkInLongitude), checkInAddress);
+            check_inLocation.insertData(checkInName.getText().toString(),Double.valueOf(checkInLatitude), Double.valueOf(checkInLongitude), checkInAddress, date, time);
             Toast.makeText(this, checkInName.getText().toString() + ": checked into database!", Toast.LENGTH_SHORT).show();
             finish();
         }

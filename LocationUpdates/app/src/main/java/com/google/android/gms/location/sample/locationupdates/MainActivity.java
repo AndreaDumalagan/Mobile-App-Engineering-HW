@@ -2,6 +2,7 @@ package com.google.android.gms.location.sample.locationupdates;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -38,9 +39,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -153,6 +162,14 @@ public class MainActivity extends AppCompatActivity {
      */
     private String mLastUpdateTime;
 
+    static MainActivity instance;
+    LocationRequest locationRequest;
+    FusedLocationProviderClient fusedLocationProviderClient;
+
+    public static MainActivity getInstance(){
+        return instance;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,20 +185,28 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * Test locations
-         *
-        myDb.insertData("55 Hunt", 40.5039456, -74.4562403, "55 Huntington St, New Brunswick, NJ 08901, USA");
-        myDb.insertData("DSV Lab", 40.5217127, -74.4606974, "94 Brett Rd, Piscataway, NJ 08854, USA");
-        myDb.insertData("Mobile App Classroom", 40.5223, -74.461, "560 Metlars Ln, Piscataway, NJ 08854, USA");
-        myDb.insertData("CoRE Building", 40.52129, -74.46109, "96 Frelinghuysen Rd, Piscataway, NJ 08854, USA");
-        myDb.insertData("GTL", 40.51967, -74.46103, "656 Bartholomew Rd, Piscataway, NJ 08854");
-        myDb.insertData("Free Burritos", 40.52302158776, -74.458502792, "656 Bartholomew Rd, Piscataway, NJ 08854");*/
+         */
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+        String date = dateFormat.format(calendar.getTime());
+        String time = timeFormat.format(calendar.getTime());
+        /**
+         * Test locations*/
+
+        myDb.insertData("55 Hunt", 40.5039456, -74.4562403, "55 Huntington St, New Brunswick, NJ 08901, USA", date, time);
+        myDb.insertData("DSV Lab", 40.5217127, -74.4606974, "94 Brett Rd, Piscataway, NJ 08854, USA", date, time);
+        myDb.insertData("Mobile App Classroom", 40.5223, -74.461, "560 Metlars Ln, Piscataway, NJ 08854, USA", date, time);
+        myDb.insertData("CoRE Building", 40.52129, -74.46109, "96 Frelinghuysen Rd, Piscataway, NJ 08854, USA", date, time);
+        myDb.insertData("GTL", 40.51967, -74.46103, "656 Bartholomew Rd, Piscataway, NJ 08854", date, time);
+        myDb.insertData("Free Burritos", 40.52302158776, -74.458502792, "604 Bartholomew Rd, Piscataway, NJ 08854", date, time);
 
         // Locate the UI widgets.
-        mStartUpdatesButton = (Button) findViewById(R.id.start_updates_button);
-        mStopUpdatesButton = (Button) findViewById(R.id.stop_updates_button);
-        mLatitudeTextView = (TextView) findViewById(R.id.latitude_text);
-        mLongitudeTextView = (TextView) findViewById(R.id.longitude_text);
-        mLastUpdateAddressView = (TextView) findViewById(R.id.last_update_time_text);
+        mStartUpdatesButton = findViewById(R.id.start_updates_button);
+        mStopUpdatesButton = findViewById(R.id.stop_updates_button);
+        mLatitudeTextView = findViewById(R.id.latitude_text);
+        mLongitudeTextView = findViewById(R.id.longitude_text);
+        mLastUpdateAddressView = findViewById(R.id.last_update_time_text);
 
         // Set labels.
         mLatitudeLabel = getResources().getString(R.string.latitude_label);
@@ -228,6 +253,66 @@ public class MainActivity extends AppCompatActivity {
         createLocationCallback();
         createLocationRequest();
         buildLocationSettingsRequest();
+
+        instance = this;
+        Dexter.withActivity(this)
+                    .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    .withListener(new PermissionListener() {
+                        @Override
+                        public void onPermissionGranted(PermissionGrantedResponse response) {
+                            Log.i("testing", "Updating?");
+                            updateLocation();
+                        }
+
+                        @Override
+                        public void onPermissionDenied(PermissionDeniedResponse response) {
+                            Toast.makeText(MainActivity.this, "You must allow application to access location.", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                        }
+                    }).check();
+    }
+
+    private void updateLocation(){
+        buildLocationRequest();
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest,getPendingIntent());
+    }
+    private PendingIntent getPendingIntent() {
+        Intent intent = new Intent(this, DailyPathService.class);
+        intent.setAction(DailyPathService.ACTION_PROGRESS_UPDATE);
+        return PendingIntent.getBroadcast(this,0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+    private void buildLocationRequest() {
+        locationRequest = new LocationRequest();
+        locationRequest.setPriority((locationRequest.PRIORITY_HIGH_ACCURACY));
+        locationRequest.setInterval(1000*60*5);
+        locationRequest.setFastestInterval(1000*60*3);
+        //locationRequest.setSmallestDisplacement(10f);
+    }
+    public void updateDailyPath(final String address, final double latitude, final double longitude){
+
+        MainActivity.this.runOnUiThread(new Runnable(){
+
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+            String date = dateFormat.format(calendar.getTime());
+            String time = timeFormat.format(calendar.getTime());
+
+            @Override
+            public void run(){
+                myDb.insertDailyPath(latitude, longitude, address, date, time);
+                Log.i("Testing Time", date + ", " + time + ", " + address);
+            }
+        });
     }
 
     /**
@@ -261,25 +346,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets up the location request. Android has two location request settings:
-     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
-     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
-     * the AndroidManifest.xml.
-     * <p/>
-     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
-     * interval (5 seconds), the Fused Location Provider API returns location updates that are
-     * accurate to within a few feet.
-     * <p/>
-     * These settings are appropriate for mapping applications that show real-time location
-     * updates.
+     * Sets up the location request.
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
 
-        // Sets the desired interval for active location updates. This interval is
-        // inexact. You may not receive updates at all if no location sources are available, or
-        // you may receive them slower than requested. You may also receive updates faster than
-        // requested if other applications are requesting location at a faster interval.
+        // Sets the desired interval for active location updates.
+        // Inexact when there are no location services available.
         mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
 
         // Sets the fastest rate for active location updates. This interval is exact, and your
@@ -444,9 +517,6 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentLocation.getLongitude()));
             mLastUpdateAddressView.setText(String.format(Locale.ENGLISH, "%s: %s",
                     "Address", mCurrentAddress));
-
-            /*Toast.makeText(this, getCompleteAddressString(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()) ,
-                    Toast.LENGTH_LONG).show();*/
         }
     }
 
@@ -509,7 +579,6 @@ public class MainActivity extends AppCompatActivity {
         } else if (!checkPermissions()) {
             requestPermissions();
         }
-
         updateUI();
     }
 
@@ -633,18 +702,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    /**
-     * Function to push latitude, longitude coordinates to database
-
-    public void addData(View view){
-        if(mCurrentLocation != null) {
-            boolean isInserted = myDb.insertData(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-
-            if (isInserted) {
-                Toast.makeText(this, "YES", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "NO >:(", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }*/
 }

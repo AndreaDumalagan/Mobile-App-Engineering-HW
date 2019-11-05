@@ -7,13 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public static final String DATABASE_NAME = "TESTING_AGAIN.db";
-    public static final String TABLE_NAME = "test_locations";
-    public static final String TABLE_NAME_2 = "almost_final_locations";
+    public static final String DATABASE_NAME = "Locations.db";
     public static final String CHECKIN_LOCATIONS = "checkin_locations";
     public static final String MAP_LOCATIONS = "map_locations";
     public static final String DAILYPATH_LOCATIONS = "dailypath_locations";
-    public static final String COL_1 = "ID";
     public static final String checkinName = "NAME";
     public static final String COL_2 = "LATITUDE";
     public static final String COL_3 = "LONGITUDE";
@@ -28,8 +25,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME LONGTEXT,LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
-        db.execSQL("create table " + TABLE_NAME_2 + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
         db.execSQL("create table " + CHECKIN_LOCATIONS + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME LONGTEXT,LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
         db.execSQL("create table " + MAP_LOCATIONS + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, LATITUDE DOUBLE, LONGITUDE DOUBLE, DATE TEXT, TIME TEXT)");
         db.execSQL("create table " + DAILYPATH_LOCATIONS + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, LATITUDE DOUBLE, LONGITUDE DOUBLE, ADDRESS LONGTEXT, DATE TEXT, TIME TEXT)");
@@ -37,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+
         db.execSQL("DROP TABLE IF EXISTS " + CHECKIN_LOCATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + MAP_LOCATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + DAILYPATH_LOCATIONS);
@@ -45,7 +40,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(String checkinLocation, double latitude, double longitude, String address){
+    public boolean insertData(String checkinLocation, double latitude, double longitude, String address, String date, String time){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -54,15 +49,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_2, latitude);
         contentValues.put(COL_3, longitude);
         contentValues.put(COL_4, address);
+        contentValues.put(COL_5, date);
+        contentValues.put(COL_6, time);
 
         //takes 3 arguments: table name, null, contentValues
-        long result = db.insert(TABLE_NAME, null, contentValues);
-        long result_2 = db.insert(TABLE_NAME_2, null, contentValues);
+        long result = db.insert(CHECKIN_LOCATIONS, null, contentValues);
 
         //how to know if values are inserted to table or not
         //db.insert() will return -1 if not successfully inserted
         //otherwise, return row of newly inserted data
-        if (result == -1 && result_2 ==-1){
+        if (result == -1){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    public boolean insertDailyPath(double latitude, double longitude, String address,String date, String time){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_2, latitude);
+        contentValues.put(COL_3, longitude);
+        contentValues.put(COL_5, date);
+        contentValues.put(COL_6, time);
+
+        long result = db.insert(DAILYPATH_LOCATIONS, null, contentValues);
+
+        //how to know if values are inserted to table or not
+        //db.insert() will return -1 if not successfully inserted
+        //otherwise, return row of newly inserted data
+        if (result == -1){
             return false;
         }
         else{
@@ -72,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
+        Cursor res = db.rawQuery("select * from " + CHECKIN_LOCATIONS, null);
         return res;
     }
 }
