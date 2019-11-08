@@ -116,5 +116,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getMapLocationData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + MAP_LOCATIONS, null);
+        return res;
+    }
+
 
 }

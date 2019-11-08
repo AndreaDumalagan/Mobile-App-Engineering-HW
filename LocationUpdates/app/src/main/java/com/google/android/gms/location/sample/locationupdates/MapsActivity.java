@@ -61,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Add markers from check-in table
         checkInMarkers();
+        checkInMapLocations();
         //Get user device location and see it on Google Maps
         getDeviceLocation();
         //Provides simple way to display a device's location on the map--does not provide data
@@ -151,10 +152,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
 
-        StringBuffer buffer = new StringBuffer();
         while (res.moveToNext()){
             LatLng latLng = new LatLng(Double.valueOf(res.getString(2)), Double.valueOf(res.getString(3)));
             mMap.addMarker(new MarkerOptions().position(latLng).title("Check-in Location: " + res.getString(1)).snippet(latLng.latitude + ", " + latLng.longitude));
+            //buffer.append("Latitude: " + res.getString(1) +"\n");
+            //buffer.append("Longitude: " + res.getString(2) + "\n");
+        }
+    }
+
+    private void checkInMapLocations(){
+        Cursor res = db.getMapLocationData();
+
+        if(res.getCount() == 0){
+            //Show message
+            //showMessage("Error", "No Check-in Locations Found.");
+            return;
+        }
+        while (res.moveToNext()){
+            LatLng latLng = new LatLng(Double.valueOf(res.getString(1)), Double.valueOf(res.getString(2)));
+            mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).position(latLng).title("Check-in Location: " + res.getString(0)).snippet(latLng.latitude + ", " + latLng.longitude));
             //buffer.append("Latitude: " + res.getString(1) +"\n");
             //buffer.append("Longitude: " + res.getString(2) + "\n");
         }

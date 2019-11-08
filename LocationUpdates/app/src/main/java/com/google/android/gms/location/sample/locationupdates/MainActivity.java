@@ -185,23 +185,21 @@ public class MainActivity extends AppCompatActivity {
         btnListView = findViewById(R.id.checkin_list);
 
 
-        /**
-         * Test locations
-         */
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
         String date = dateFormat.format(calendar.getTime());
         String time = timeFormat.format(calendar.getTime());
+
         /**
-         * Test locations*/
+         * Test locations
 
         myDb.insertData("55 Hunt", 40.5039456, -74.4562403, "55 Huntington St, New Brunswick, NJ 08901, USA", date, time);
         myDb.insertData("DSV Lab", 40.5217127, -74.4606974, "94 Brett Rd, Piscataway, NJ 08854, USA", date, time);
         myDb.insertData("Mobile App Classroom", 40.5223, -74.461, "560 Metlars Ln, Piscataway, NJ 08854, USA", date, time);
         myDb.insertData("CoRE Building", 40.52129, -74.46109, "96 Frelinghuysen Rd, Piscataway, NJ 08854, USA", date, time);
         myDb.insertData("GTL", 40.51967, -74.46103, "656 Bartholomew Rd, Piscataway, NJ 08854", date, time);
-        myDb.insertData("Free Burritos", 40.52302158776, -74.458502792, "604 Bartholomew Rd, Piscataway, NJ 08854", date, time);
+        myDb.insertData("Free Burritos", 40.52302158776, -74.458502792, "604 Bartholomew Rd, Piscataway, NJ 08854", date, time);*/
 
         // Locate the UI widgets.
         mStartUpdatesButton = findViewById(R.id.start_updates_button);
