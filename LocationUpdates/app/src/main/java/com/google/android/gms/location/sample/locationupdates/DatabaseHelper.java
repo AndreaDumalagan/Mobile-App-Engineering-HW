@@ -88,9 +88,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean insertMapLocation(double latitude, double longitude, String date, String time){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_2, latitude);
+        contentValues.put(COL_3, longitude);
+        contentValues.put(COL_5, date);
+        contentValues.put(COL_6, time);
+
+        long result = db.insert(MAP_LOCATIONS, null, contentValues);
+
+        //how to know if values are inserted to table or not
+        //db.insert() will return -1 if not successfully inserted
+        //otherwise, return row of newly inserted data
+        if (result == -1){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
     public Cursor getAllData(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + CHECKIN_LOCATIONS, null);
         return res;
     }
+
+
 }

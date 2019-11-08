@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDb;
     Button btnAddData;
     Button btnMapView;
+    Button btnListView;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -181,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         btnAddData = findViewById(R.id.checkin_db);
         btnMapView = findViewById(R.id.map_view);
+        btnListView = findViewById(R.id.checkin_list);
 
 
         /**
@@ -246,6 +248,18 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, MapsActivity.class));
             }
         });
+
+        /**
+         * New Activity: List View
+         * */
+        btnListView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, ListLocations.class));
+            }
+        });
+
+
 
 
         // Kick off the process of building the LocationCallback, LocationRequest, and
