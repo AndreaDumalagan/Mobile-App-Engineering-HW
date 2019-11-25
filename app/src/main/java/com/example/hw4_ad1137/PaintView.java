@@ -1,6 +1,5 @@
 package com.example.hw4_ad1137;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
@@ -13,11 +12,8 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -33,7 +29,7 @@ public class PaintView extends View {
     private float startY;
     private float mX, mY;
 
-    public float helpX, helpY;
+    public static float helpX, helpY;
     private float clickX, clickY;
 
     private Path mPath;
@@ -90,16 +86,6 @@ public class PaintView extends View {
         blur = false;
     }
 
-    public void emboss() {
-        emboss = true;
-        blur = false;
-    }
-
-    public void blur() {
-        emboss = false;
-        blur = true;
-    }
-
     public void clear() {
         backgroundColor = DEFAULT_BG_COLOR;
         paths.clear();
@@ -116,11 +102,6 @@ public class PaintView extends View {
             mPaint.setColor(strokePath.color);
             mPaint.setStrokeWidth(strokePath.strokeWidth);
             mPaint.setMaskFilter(null);
-
-            if (strokePath.emboss)
-                mPaint.setMaskFilter(mEmboss);
-            else if (strokePath.blur)
-                mPaint.setMaskFilter(mBlur);
 
             mCanvas.drawPath(strokePath.path, mPaint);
             mCanvas.drawCircle(clickX, clickY, 150, circlePaint);
@@ -162,46 +143,49 @@ public class PaintView extends View {
         float x = event.getX();
         float y = event.getY();
 
-        switch(event.getAction()) {
-            case MotionEvent.ACTION_DOWN :
+        if (event.getPointerCount() > 1) {
+            Log.i("Multi-touch Event", "Fingers > 1:" + event.getPointerCount());
+        }
+        else if (event.getPointerCount() == 1){
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
 
-                startX = event.getX();
-                startY = event.getY();
+                    startX = event.getX();
+                    startY = event.getY();
 
-                touchStart(x, y);
-                invalidate();
-                break;
+                    touchStart(x, y);
+                    invalidate();
+                    break;
 
-            case MotionEvent.ACTION_MOVE :
+                case MotionEvent.ACTION_MOVE:
 
-                clickX = x;
-                clickY = y;
+                    clickX = x;
+                    clickY = y;
 
-                touchMove(x, y);
-                invalidate();
-                break;
+                    helpX = x;
+                    helpY = y;
 
-            case MotionEvent.ACTION_UP :
+                    touchMove(x, y);
+                    invalidate();
+                    break;
 
-                float endX = event.getX();
-                float endY = event.getY();
+                case MotionEvent.ACTION_UP:
 
-                if(isAClick(startX, endX, startY, endY)){
-                    Log.i("TESTING CLICK", "Issa click");
-                    clickX = endX;
-                    clickY = endY;
-                }
+                    float endX = event.getX();
+                    float endY = event.getY();
 
-                touchUp();
-                invalidate();
-                break;
+                    if (isAClick(startX, endX, startY, endY)) {
+                        clickX = endX;
+                        clickY = endY;
+                    }
+
+                    touchUp();
+                    invalidate();
+                    break;
+            }
         }
 
         return true;
-    }
-
-    public void textCoords(){
-        Log.i("TEXT COORDS", helpX + ", " + helpY);
     }
 
     private boolean isAClick(float startX, float endX, float startY, float endY){
