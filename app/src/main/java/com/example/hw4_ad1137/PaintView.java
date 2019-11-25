@@ -2,7 +2,6 @@ package com.example.hw4_ad1137;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
@@ -11,7 +10,6 @@ import android.graphics.EmbossMaskFilter;
 import android.graphics.MaskFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -31,16 +29,16 @@ public class PaintView extends View {
     private static final float TOUCH_TOLERANCE = 4;
 
     private int CLICK_ACTION_THRESHOLD = 200;
-    private SurfaceHolder surfaceHolder;
-    private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private float startX;
     private float startY;
     private float mX, mY;
 
-    private float textX, textY;
+    public float helpX, helpY;
+    private float clickX, clickY;
 
     private Path mPath;
     private Paint mPaint;
+    private Paint circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private ArrayList<StrokePath> paths = new ArrayList<StrokePath>();
     private int currentColor;
     private int backgroundColor = DEFAULT_BG_COLOR;
@@ -80,6 +78,8 @@ public class PaintView extends View {
 
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+        circlePaint.setColor(Color.YELLOW);
+        circlePaint.setStyle(Paint.Style.FILL);
 
         currentColor = DEFAULT_COLOR;
         strokeWidth = BRUSH_SIZE;
@@ -123,6 +123,7 @@ public class PaintView extends View {
                 mPaint.setMaskFilter(mBlur);
 
             mCanvas.drawPath(strokePath.path, mPaint);
+            mCanvas.drawCircle(clickX, clickY, 150, circlePaint);
 
         }
 
@@ -139,7 +140,6 @@ public class PaintView extends View {
         mPath.moveTo(x, y);
         mX = x;
         mY = y;
-
     }
 
     private void touchMove(float x, float y) {
@@ -164,27 +164,32 @@ public class PaintView extends View {
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
+
                 startX = event.getX();
                 startY = event.getY();
 
                 touchStart(x, y);
                 invalidate();
                 break;
-            case MotionEvent.ACTION_MOVE :
-                textX = x;
-                textY = y;
 
-                Log.i("TextView Coords", returnCoordinates());
+            case MotionEvent.ACTION_MOVE :
+
+                clickX = x;
+                clickY = y;
+
                 touchMove(x, y);
                 invalidate();
                 break;
+
             case MotionEvent.ACTION_UP :
+
                 float endX = event.getX();
                 float endY = event.getY();
 
                 if(isAClick(startX, endX, startY, endY)){
                     Log.i("TESTING CLICK", "Issa click");
-                    //returnCoordinates(endX, endY);
+                    clickX = endX;
+                    clickY = endY;
                 }
 
                 touchUp();
@@ -195,11 +200,8 @@ public class PaintView extends View {
         return true;
     }
 
-    public String returnCoordinates(){
-        String updateText = "";
-        updateText = "X: " + textX + ", Y: " + textY;
-
-        return updateText;
+    public void textCoords(){
+        Log.i("TEXT COORDS", helpX + ", " + helpY);
     }
 
     private boolean isAClick(float startX, float endX, float startY, float endY){

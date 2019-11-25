@@ -37,9 +37,7 @@ public class MainActivity extends AppCompatActivity {
         paintView.init(metrics);
 
         textView = findViewById(R.id.coordUpdates);
-
-        testing = paintView.returnCoordinates();
-        Log.i("MainActivity", testing);
+        paintView.textCoords();
     }
 
 
