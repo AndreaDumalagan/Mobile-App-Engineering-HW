@@ -9,6 +9,7 @@ public class StrokePath {
     public boolean blur;
     public int strokeWidth;
     public Path path;
+    public float x, y;
 
     public StrokePath(int color, boolean emboss, boolean blur, int strokeWidth, Path path) {
         this.color = color;
@@ -17,4 +18,6 @@ public class StrokePath {
         this.strokeWidth = strokeWidth;
         this.path = path;
     }
+
+
 }

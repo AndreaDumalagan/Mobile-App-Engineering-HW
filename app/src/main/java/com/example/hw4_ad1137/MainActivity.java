@@ -3,22 +3,28 @@ package com.example.hw4_ad1137;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private PaintView paintView;
+    private TextView textView;
+    public String testing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +35,14 @@ public class MainActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
+
+        textView = findViewById(R.id.coordUpdates);
+
+        testing = paintView.returnCoordinates();
+        Log.i("MainActivity", testing);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
