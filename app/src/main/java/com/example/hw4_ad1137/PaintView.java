@@ -11,7 +11,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -33,8 +32,6 @@ public class PaintView extends View {
     private float multiY[] = new float[5];
     private Paint[] multiPaint;
     private int multiCount;
-
-    private float clickX, clickY;
 
     private Path mPath;
     private Paint mPaint;
@@ -189,9 +186,6 @@ public class PaintView extends View {
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-
-                        clickX = x;
-                        clickY = y;
 
                         touchMove(x, y);
                         invalidate();

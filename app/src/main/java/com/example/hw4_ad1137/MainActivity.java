@@ -7,11 +7,14 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     private PaintView paintView;
-    public PaintView testing;
+    public TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +26,21 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         paintView.init(metrics);
 
-        testing = new PaintView(this);
+        textView = findViewById(R.id.coordUpdates);
+
+        paintView.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+
+                float x = event.getX();
+                float y = event.getY();
+
+                textView.setText("PositionID: 0, X: " + x + ", Y: " + y);
+
+                return false;
+            }
+        });
+
     }
 
     @Override
