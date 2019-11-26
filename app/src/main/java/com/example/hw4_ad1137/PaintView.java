@@ -29,7 +29,11 @@ public class PaintView extends View {
     private float startY;
     private float mX, mY;
 
-    public static float helpX, helpY;
+    private float multiX[]= new float[5];
+    private float multiY[] = new float[5];
+    private Paint[] multiPaint;
+    private int multiCount;
+
     private float clickX, clickY;
 
     private Path mPath;
@@ -77,6 +81,23 @@ public class PaintView extends View {
         circlePaint.setColor(Color.YELLOW);
         circlePaint.setStyle(Paint.Style.FILL);
 
+        multiPaint = new Paint[5];
+        for(int i = 0; i < 5; i++){
+            multiPaint[i] = new Paint();
+            multiPaint[i].setAntiAlias(true);
+        }
+
+        multiPaint[0].setColor(Color.MAGENTA);
+        multiPaint[0].setStyle(Paint.Style.FILL);
+        multiPaint[1].setColor(Color.CYAN);
+        multiPaint[1].setStyle(Paint.Style.FILL);
+        multiPaint[2].setColor(Color.GREEN);
+        multiPaint[2].setStyle(Paint.Style.FILL);
+        multiPaint[3].setColor(Color.BLUE);
+        multiPaint[3].setStyle(Paint.Style.FILL);
+        multiPaint[4].setColor(Color.YELLOW);
+        multiPaint[4].setStyle(Paint.Style.FILL);
+
         currentColor = DEFAULT_COLOR;
         strokeWidth = BRUSH_SIZE;
     }
@@ -104,9 +125,13 @@ public class PaintView extends View {
             mPaint.setMaskFilter(null);
 
             mCanvas.drawPath(strokePath.path, mPaint);
-            mCanvas.drawCircle(clickX, clickY, 150, circlePaint);
+
+            for(int i = 0; i < multiCount; i++){
+                mCanvas.drawCircle(multiX[i], multiY[i], 150, multiPaint[i]);
+            }
 
         }
+
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
@@ -142,46 +167,51 @@ public class PaintView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
+        int pointCount = event.getPointerCount();
 
-        if (event.getPointerCount() > 1) {
-            Log.i("Multi-touch Event", "Fingers > 1:" + event.getPointerCount());
-        }
-        else if (event.getPointerCount() == 1){
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
+        for(int i = 0; i < pointCount; i++){
+            int id = event.getPointerId(i);
 
-                    startX = event.getX();
-                    startY = event.getY();
+            if(id < 5){
+                multiCount = pointCount;
 
-                    touchStart(x, y);
-                    invalidate();
-                    break;
+                multiX[id] = event.getX(i);
+                multiY[id] = event.getY(i);
 
-                case MotionEvent.ACTION_MOVE:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
 
-                    clickX = x;
-                    clickY = y;
+                        startX = event.getX();
+                        startY = event.getY();
 
-                    helpX = x;
-                    helpY = y;
+                        touchStart(x, y);
+                        invalidate();
+                        break;
 
-                    touchMove(x, y);
-                    invalidate();
-                    break;
+                    case MotionEvent.ACTION_MOVE:
 
-                case MotionEvent.ACTION_UP:
+                        clickX = x;
+                        clickY = y;
 
-                    float endX = event.getX();
-                    float endY = event.getY();
+                        touchMove(x, y);
+                        invalidate();
+                        break;
 
-                    if (isAClick(startX, endX, startY, endY)) {
-                        clickX = endX;
-                        clickY = endY;
-                    }
+                    case MotionEvent.ACTION_UP:
 
-                    touchUp();
-                    invalidate();
-                    break;
+                        float endX = event.getX(i);
+                        float endY = event.getY(i);
+
+                        if (isAClick(startX, endX, startY, endY)) {
+
+                            multiX[id] = endX;
+                            multiY[id] = endY;
+                        }
+
+                        touchUp();
+                        invalidate();
+                        break;
+                }
             }
         }
 
